@@ -1,0 +1,18 @@
+CREATE TABLE dominoes_menu (
+    item_id INT PRIMARY KEY,
+    food_item VARCHAR(255),
+    category VARCHAR(50),
+    price DECIMAL(8, 2)
+);
+
+INSERT INTO dominoes_menu VALUES
+(101, 'Margherita', 'Pizza', 12.99),
+(102, 'Pepperoni', 'Pizza', 14.99),
+(103, 'Veggie', 'Pizza', 13.99),
+(104, 'BBQ Chicken', 'Pizza', 15.99),
+(105, 'Chicken Alfredo', 'Pasta', 10.99),
+(106, 'Meatball Marinara', 'Pasta', 11.99),
+(107, 'Caesar Salad', 'Salad', 7.99),
+(108, 'Buffalo Wings', 'Appetizer', 8.99),
+(109, 'Cinnamon Twists', 'Dessert', 5.99),
+(110, 'Soft Drinks', 'Beverages', 1.99);
