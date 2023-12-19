@@ -1,0 +1,62 @@
+import mysql.connector as sql
+
+print("\t\t\t\t\tJAI_DELIVERIES")
+print(f"\t\t\t\t\t{'-' * 14}")
+print("Restaurants available")
+
+userchoice = []
+
+try:
+    # Use a context manager for database connection
+    with sql.connect(host="localhost", user="root", passwd="1234", database="restaurant") as connection:
+        crsr = connection.cursor()
+        crsr.execute("SHOW TABLES")
+        table = crsr.fetchall()
+        print(table)
+
+        try:
+            choice = int(input("WHERE WOULD YOU LIKE TO ORDER (Enter restaurant number): "))
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+            exit()
+
+        if choice == 1:
+            query = "SELECT * FROM dominoes_menu;"
+            crsr.execute(query)
+            menutable = crsr.fetchall()
+
+            # Print header
+            print("{:<15} | {:<15} | {:<15} | {:<15}".format("Item ID", "Food Item", "Category", "Price"))
+            print("-" * 65)
+
+            # Print rows
+            for row in menutable:
+                print("{:<15} | {:<15} | {:<15} | {:<15}".format(*row))
+
+            while True:
+                try:
+                    food = input("ENTER YOUR CHOICE, TO END PRESS ENTER: ")
+                    if food == "":
+                        break
+                    else:
+                        qty = int(input("ENTER YOUR REQUIRED QUANTITY FOR FOOD: "))
+                        userchoice.append([int(food), qty])
+
+                        total_cost = 0
+                        for sno, qty in userchoice:
+                            crsr.execute("SELECT price FROM dominoes_menu WHERE item_id = %s", (sno,))
+                            amt = crsr.fetchone()
+                            total_item_cost = float(amt[0]) * qty
+                            print(f"Item ID: {sno}, Quantity: {qty}, Total Cost: {total_item_cost} RUPPEES ONLY")
+                            total_cost += total_item_cost
+
+                except ValueError:
+                    print("Invalid input. Please enter a valid number.")
+
+    print(f"Total Cost for Your Order: {total_cost} RUPPEES ONLY")
+    print("Thanks for visiting JAI_DELIVERIES!")
+
+except sql.Error as e:
+    print(f"Error connecting to the database: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
