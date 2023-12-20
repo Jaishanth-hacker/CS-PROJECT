@@ -1,0 +1,74 @@
+import mysql.connector as sql
+
+print("\t\t\t\t\tJAI_DELIVERIES")
+print(f"\t\t\t\t\t{'-' * 14}")
+print("Restaurants available")
+
+userchoice = []
+menunum = []
+lenlst = []
+
+# Use consistent import alias
+connection = sql.connect(host="localhost", user="root", passwd="Anton98650n", database="food_delivery")
+cur = connection.cursor()
+cur.execute("SHOW TABLES")
+
+num = 1
+total_cost = 0
+
+for loop in cur:
+    print(num, loop[0])
+    print()
+    num += 1
+
+choice = int(input("Where would you like to order:\n"))
+
+def order(name):
+    global total_cost
+    query = f"SELECT * FROM {name};"
+    cur.execute(query)
+
+    # Print menu
+    print("{:<15} | {:<15} | {:<15} ".format("Item ID", "Food Item", "Price"))
+    print("-" * 65)
+
+    for row in cur.fetchall():
+        print("{:<15} | {:<15} | {:<15} ".format(*row))
+        menunum.append(row[0])
+
+    while True:
+        food = input("ENTER YOUR CHOICE, TO END PRESS ENTER: \n")
+
+        if food in menunum:
+            lenlst.append("")
+            qty = int(input(f"ENTER REQUIRED QUANTITY FOR FOOD ID {food}: "))
+            userchoice.append([int(food), qty])
+
+            for i, j in userchoice:
+                cur.execute(f"SELECT price FROM {name} WHERE sno={i}")
+                for k in cur:
+                    total_cost += float(k[0]) * j
+                    break
+                continue
+            break
+        elif food == "":
+            break
+        elif food not in menunum:
+            print("Enter correct value")
+
+    if lenlst:
+        if total_cost:
+            print(f"Total Cost: {total_cost} RUPPEES ONLY\n")
+            phone = int(input("Enter phone number:\n"))
+            address = input("Enter your location:\n")
+            print("Thanks for ordering JAI_DELIVERIES!")
+
+    total_cost = 0
+
+# Validate the user's choice
+if 1 <= choice <= 5:
+    # Use a dictionary to map choices to restaurant names
+    restaurant_names = {1: "combo_king", 2: "hang_out", 3: "kfc", 4: "piazza", 5: "subway"}
+    order(restaurant_names[choice])
+else:
+    print("Invalid choice")
